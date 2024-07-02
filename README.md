@@ -1,2 +1,2 @@
 # Rock-paper-scissors-Dicoding-ML
-Projek Akhir klasifikasi gambar dengan menggunakan algoritma CNN
+Projek Akhir klasifikasi gambar gunting, batu, kertas dengan menggunakan algoritma CNN
