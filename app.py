@@ -30,7 +30,7 @@ def predict(image_name):
     if not os.path.exists(classifier_model):
         download_model(model_url, classifier_model)
 
-    model = load_model("model/rps-dicoding.h5")
+    model = load_model(classifier_model)
 
     img = image.load_img(image_name, target_size=(224, 224))
     x = image.img_to_array(img)
