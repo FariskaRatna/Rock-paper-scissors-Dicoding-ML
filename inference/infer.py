@@ -34,5 +34,5 @@ def classify_image(image_path, model):
 model = load_model("model/rps-dicoding.h5")
 
 # Provide the image path
-image_path = 'thumb.jpg'
+image_path = 'paper5.png'
 classify_image(image_path, model)
