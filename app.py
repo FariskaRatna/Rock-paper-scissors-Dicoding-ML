@@ -20,7 +20,7 @@ def download_model(url, namefile):
     with open(namefile, 'wb') as f:
         f.write(response.content)
 
-def predict(image_name):
+def predict(image_file):
     classifier_model = "rps-dicoding.h5"
     model_url = 'https://github.com/FariskaRatna/Rock-paper-scissors-Dicoding-ML/releases/download/v1_rps/rps-dicoding.h5'
 
@@ -29,7 +29,8 @@ def predict(image_name):
 
     model = load_model(classifier_model)
 
-    img = image.load_img(image_name, target_size=(224, 224))
+    img = Image.open(image_file)
+    img = img.resize((224, 224))
     x = image.img_to_array(img)
     x = np.expand_dims(x, axis=0)
 
@@ -43,13 +44,14 @@ def predict(image_name):
     else:
         result = "SCISSORS"
 
-    results = f"The classification of the image is {result} with a confidence score of {100 * np.max(classes):.2f}%"
+    confidence = 100 * np.max(classes)
+    results = f"The classification of the image is {result} with a confidence score of {confidence:.2f}%"
 
     return results
 
 def main():
     file_uploaded = st.file_uploader("Choose File", type=["png", "jpg", "jpeg"])
-    class_button = st.button("Classifier")
+    class_button = st.button("Classify")
     if file_uploaded is not None:
         image = Image.open(file_uploaded)
         st.image(image, caption="Image has been uploaded", use_column_width=True, width=300)
