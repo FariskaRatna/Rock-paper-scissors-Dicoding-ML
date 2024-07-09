@@ -1,39 +1,26 @@
 import streamlit as st
-import numpy as np
-from keras.preprocessing import image
+import time
 import tensorflow as tf
+import numpy as np
 from tensorflow.keras.models import load_model
+from keras.preprocessing import image
 from PIL import Image
-import requests
 import os
+import requests
 
-# Function to download the model if not present
+with open('style.css') as f:
+    st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
+
+st.title('Rock Paper Scissors Classification')
+
+st.markdown("Welcome to the Rock Paper Scissors Classification using CNN for Dicoding Machine Learning Last Submission.")
+
 def download_model(url, namefile):
     response = requests.get(url)
     with open(namefile, 'wb') as f:
         f.write(response.content)
 
-# Function to classify the image
-def classify_image(img, model):
-    # Convert the image to a numpy array
-    img = img.resize((224, 224))
-    x = image.img_to_array(img)
-    x = np.expand_dims(x, axis=0)
-
-    # Predict the class
-    images = np.vstack([x])
-    classes = model.predict(images, batch_size=10)
-
-    # Determine the class label
-    if classes[0, 0] != 0:
-        return 'PAPER'
-    elif classes[0, 1] != 0:
-        return 'ROCK'
-    else:
-        return 'SCISSORS'
-
-# Function to load the model
-def load_trained_model():
+def predict(image_file):
     classifier_model = "rps-dicoding.h5"
     model_url = 'https://github.com/FariskaRatna/Rock-paper-scissors-Dicoding-ML/releases/download/v1_rps/rps-dicoding.h5'
 
@@ -41,23 +28,43 @@ def load_trained_model():
         download_model(model_url, classifier_model)
 
     model = load_model(classifier_model)
-    return model
 
-# Load the model once at the start
-model = load_trained_model()
+    img = Image.open(image_file)
+    img = img.resize((224, 224))
+    x = image.img_to_array(img)
+    x = np.expand_dims(x, axis=0)
 
-# Streamlit interface
-st.title('Rock Paper Scissors Classification')
-st.markdown("Welcome to the Rock Paper Scissors Classification using CNN for Dicoding Machine Learning Last Submission.")
+    images = np.vstack([x])
+    classes = model.predict(images, batch_size=10)
 
-file_uploaded = st.file_uploader("Choose an image...", type=["png", "jpg", "jpeg"])
+    if classes[0, 0] != 0:
+        result = "PAPER"
+    elif classes[0, 1] != 0:
+        result = "ROCK"
+    else:
+        result = "SCISSORS"
 
-if file_uploaded is not None:
-    # Display the uploaded image
-    img = Image.open(file_uploaded)
-    st.image(img, caption='Uploaded Image', use_column_width=True)
+    confidence = 100 * np.max(classes)
+    results = f"The classification of the image is {result} with a confidence score of {confidence:.2f}%"
 
-    # Classify the uploaded image
-    st.write("Classifying...")
-    label = classify_image(img, model)
-    st.write(f'The classification of the image is: **{label}**')
+    return results
+
+def main():
+    file_uploaded = st.file_uploader("Choose File", type=["png", "jpg", "jpeg"])
+    class_button = st.button("Classify")
+    if file_uploaded is not None:
+        image = Image.open(file_uploaded)
+        st.image(image, caption="Image has been uploaded", use_column_width=True, width=300)
+
+    if class_button:
+        if file_uploaded is None:
+            st.write("Please upload an image")
+        else:
+            with st.spinner("Model working..."):
+                predictions = predict(file_uploaded)
+                time.sleep(1)
+                st.success("Classified")
+                st.write(predictions)
+
+if __name__ == "__main__":
+    main()
