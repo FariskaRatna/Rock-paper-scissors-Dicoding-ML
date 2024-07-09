@@ -9,7 +9,7 @@ from keras.preprocessing import image
 from PIL import Image
 import os
 import requests
-fig = plt.picture()
+fig = plt.figure()
 
 with open('style.css') as f:
     st.markdown(f"<style>{f.read()}<style>", unsafe_allow_html=True)
