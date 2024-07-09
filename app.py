@@ -1,6 +1,6 @@
 import streamlit as st
 import time
-import matplotlib.pyplot as pt
+import matplotlib.pyplot as plt
 import tensorflow as plt
 import numpy as np
 from tensorflow import keras
