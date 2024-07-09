@@ -30,6 +30,8 @@ def predict(image_file):
     model = load_model(classifier_model)
 
     img = Image.open(image_file)
+    if img.mode != 'RGB':
+        img = img.convert('RGB')
     img = img.resize((224, 224))
     x = image.img_to_array(img)
     x = np.expand_dims(x, axis=0)
