@@ -64,14 +64,14 @@ def main():
         if file_uploaded is None:
             st.write("Please upload an image")
         else:
-            with st.spinner("Model working...")
-            plt.imshow(image)
-            plt.axis("off")
-            predictions = predict(image)
-            time.sleep(1)
-            st.success("classified")
-            st.write(predictions)
-            st.pyplot(fig)
+            with st.spinner("Model working..."):
+                plt.imshow(image)
+                plt.axis("off")
+                predictions = predict(image)
+                time.sleep(1)
+                st.success("classified")
+                st.write(predictions)
+                st.pyplot(fig)
 
 if __name__ == "__main__":
     main()
