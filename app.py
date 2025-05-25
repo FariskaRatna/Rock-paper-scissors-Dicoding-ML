@@ -53,7 +53,8 @@ def main():
     file_uploaded = st.file_uploader("Pilih gambar...", type=["png", "jpg", "jpeg"])
     if file_uploaded is not None:
         image_display = Image.open(file_uploaded)
-        st.image(image_display, caption="Gambar yang diupload", use_column_width=True)
+        st.image(image_display, caption="Gambar yang diupload", use_container_width=True)
+
 
     if st.button("🔍 Klasifikasi"):
         if file_uploaded is None:
