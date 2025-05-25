@@ -8,18 +8,20 @@ from PIL import Image
 import os
 import requests
 
-with open('style.css') as f:
-    st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
+st.title('🪨📄✂️ Rock Paper Scissors Classifier')
 
-st.title('Rock Paper Scissors Classification')
+st.markdown("""
+Upload gambar tangan membentuk **rock (batu)**, **paper (kertas)**, atau **scissors (gunting)**.  
+Aplikasi ini akan mengklasifikasikannya secara otomatis menggunakan model CNN.
+""")
 
-st.markdown("Welcome to the Rock Paper Scissors Classification using CNN for Dicoding Machine Learning Last Submission.")
-
+# Function to download model from GitHub
 def download_model(url, namefile):
     response = requests.get(url)
     with open(namefile, 'wb') as f:
         f.write(response.content)
 
+# Prediction function
 def predict(image_file):
     classifier_model = "rps-dicoding.h5"
     model_url = 'https://github.com/FariskaRatna/Rock-paper-scissors-Dicoding-ML/releases/download/v1_rps/rps-dicoding.h5'
@@ -39,34 +41,30 @@ def predict(image_file):
     images = np.vstack([x])
     classes = model.predict(images, batch_size=10)
 
-    if classes[0, 0] != 0:
-        result = "PAPER"
-    elif classes[0, 1] != 0:
-        result = "ROCK"
-    else:
-        result = "SCISSORS"
-
+    # Tentukan hasil klasifikasi
+    class_names = ["PAPER", "ROCK", "SCISSORS"]
+    predicted_class = class_names[np.argmax(classes)]
     confidence = 100 * np.max(classes)
-    results = f"The classification of the image is {result} with a confidence score of {confidence:.2f}%"
 
-    return results
+    return predicted_class, confidence
 
+# Main app function
 def main():
-    file_uploaded = st.file_uploader("Choose File", type=["png", "jpg", "jpeg"])
-    class_button = st.button("Classify")
+    file_uploaded = st.file_uploader("Pilih gambar...", type=["png", "jpg", "jpeg"])
     if file_uploaded is not None:
-        image = Image.open(file_uploaded)
-        st.image(image, caption="Image has been uploaded", use_column_width=True, width=300)
+        image_display = Image.open(file_uploaded)
+        st.image(image_display, caption="Gambar yang diupload", use_column_width=True)
 
-    if class_button:
+    if st.button("🔍 Klasifikasi"):
         if file_uploaded is None:
-            st.write("Please upload an image")
+            st.warning("Silakan upload gambar terlebih dahulu.")
         else:
-            with st.spinner("Model working..."):
-                predictions = predict(file_uploaded)
+            with st.spinner("Model sedang memproses..."):
+                label, confidence = predict(file_uploaded)
                 time.sleep(1)
-                st.success("Classified")
-                st.write(predictions)
+                st.success("Selesai diklasifikasi!")
+                st.markdown(f"### Hasil: **{label}**")
+                st.markdown(f"**Confidence:** {confidence:.2f}%")
 
 if __name__ == "__main__":
     main()
